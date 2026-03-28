@@ -2,7 +2,8 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f0c14" id="meta-theme">
   <title>Генератор идей для постов</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,57 +14,101 @@
     }
 
     :root {
-      --ink: #14121a;
-      --muted: #5c5668;
+      color-scheme: dark light;
       --accent: #6b4dff;
-      --accent-soft: rgba(107, 77, 255, 0.14);
-      --card: rgba(255, 255, 255, 0.72);
-      --stroke: rgba(255, 255, 255, 0.55);
+      --accent-2: #2dd4bf;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-x: env(safe-area-inset-left, 0px);
+    }
+
+    [data-theme="dark"] {
+      color-scheme: dark;
+      --ink: #f4f2f8;
+      --ink-muted: rgba(244, 242, 248, 0.72);
+      --app-surface: #12101a;
+      --bar-bg: rgba(18, 16, 26, 0.82);
+      --card: rgba(32, 28, 48, 0.55);
+      --card-solid: rgba(38, 34, 56, 0.92);
+      --item-bg: rgba(255, 255, 255, 0.06);
+      --item-border: rgba(255, 255, 255, 0.1);
+      --stroke: rgba(255, 255, 255, 0.12);
+      --shadow: 0 8px 40px rgba(0, 0, 0, 0.45);
+      --blob-1: #5b3cf0;
+      --blob-2: #c94b9e;
+      --blob-3: #2dd4bf;
+      --title-grad: linear-gradient(115deg, #ece8ff 0%, #b8a8ff 45%, var(--accent-2) 100%);
+      --toggle-bg: rgba(255, 255, 255, 0.08);
+      --toggle-knob: #fff;
+      --btn-glow: rgba(107, 77, 255, 0.45);
+    }
+
+    [data-theme="light"] {
+      color-scheme: light;
+      --ink: #14121a;
+      --ink-muted: rgba(20, 18, 26, 0.65);
+      --app-surface: #f0f2f8;
+      --bar-bg: rgba(255, 255, 255, 0.78);
+      --card: rgba(255, 255, 255, 0.82);
+      --card-solid: #ffffff;
+      --item-bg: rgba(107, 77, 255, 0.06);
+      --item-border: rgba(107, 77, 255, 0.12);
+      --stroke: rgba(20, 18, 26, 0.08);
+      --shadow: 0 12px 48px rgba(80, 60, 140, 0.1);
+      --blob-1: #a090ff;
+      --blob-2: #f0a8d8;
+      --blob-3: #7ee8dc;
+      --title-grad: linear-gradient(115deg, #1a1428 0%, #4a38a8 42%, #0d9488 100%);
+      --toggle-bg: rgba(20, 18, 26, 0.12);
+      --toggle-knob: #fff;
+      --btn-glow: rgba(107, 77, 255, 0.35);
     }
 
     body {
       margin: 0;
-      min-height: 100vh;
+      min-height: 100dvh;
       font-family: "Outfit", system-ui, sans-serif;
-      line-height: 1.55;
+      line-height: 1.5;
       color: var(--ink);
-      padding: clamp(1.25rem, 4vw, 2.5rem);
+      background: var(--app-surface);
       overflow-x: hidden;
       position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    /* Анимированный фон */
     .bg {
       position: fixed;
       inset: 0;
-      z-index: -1;
-      background: #0f0c14;
+      z-index: 0;
+      background: var(--app-surface);
+      transition: background 0.4s ease;
     }
 
     .bg__blob {
       position: absolute;
       border-radius: 50%;
       filter: blur(72px);
-      opacity: 0.55;
+      opacity: 0.5;
       animation: float 18s ease-in-out infinite;
+      transition: opacity 0.4s ease;
+    }
+
+    [data-theme="light"] .bg__blob {
+      opacity: 0.35;
     }
 
     .bg__blob--1 {
       width: min(52vw, 420px);
       height: min(52vw, 420px);
-      background: #5b3cf0;
+      background: var(--blob-1);
       top: -8%;
       left: -12%;
-      animation-delay: 0s;
     }
 
     .bg__blob--2 {
       width: min(48vw, 380px);
       height: min(48vw, 380px);
-      background: #c94b9e;
+      background: var(--blob-2);
       bottom: -10%;
       right: -8%;
       animation-delay: -6s;
@@ -73,81 +118,180 @@
     .bg__blob--3 {
       width: min(40vw, 320px);
       height: min(40vw, 320px);
-      background: #2dd4bf;
+      background: var(--blob-3);
       top: 38%;
       left: 42%;
       transform: translate(-50%, -50%);
-      opacity: 0.35;
+      opacity: 0.32;
       animation-delay: -12s;
       animation-duration: 20s;
+    }
+
+    [data-theme="light"] .bg__blob--3 {
+      opacity: 0.22;
     }
 
     .bg__grain {
       position: absolute;
       inset: 0;
-      opacity: 0.04;
+      opacity: 0.035;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
       pointer-events: none;
     }
 
     @keyframes float {
-      0%, 100% {
-        transform: translate(0, 0) scale(1);
-      }
-      33% {
-        transform: translate(4%, 6%) scale(1.05);
-      }
-      66% {
-        transform: translate(-3%, 3%) scale(0.96);
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(4%, 6%) scale(1.05); }
+      66% { transform: translate(-3%, 3%) scale(0.96); }
+    }
+
+    .app {
+      position: relative;
+      z-index: 1;
+      min-height: 100dvh;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      max-width: 28rem;
+      margin: 0 auto;
+      padding: 0 var(--safe-x);
+    }
+
+    @media (min-width: 480px) {
+      .app {
+        padding-bottom: 1rem;
+        justify-content: center;
       }
     }
 
-    main {
-      width: 100%;
-      max-width: 28rem;
+    .app__bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: calc(0.65rem + var(--safe-top)) max(1rem, var(--safe-x)) 0.65rem;
+      margin: 0 -1rem;
+      padding-left: max(1rem, var(--safe-x));
+      padding-right: max(1rem, var(--safe-x));
+      background: var(--bar-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--stroke);
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+
+    @media (min-width: 480px) {
+      .app__bar {
+        margin: 0 0 1rem;
+        border-radius: 20px;
+        border: 1px solid var(--stroke);
+        padding: calc(0.75rem + var(--safe-top)) 1.1rem 0.75rem;
+        top: 0.5rem;
+      }
+    }
+
+    .app__bar-title {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .theme-toggle {
+      flex-shrink: 0;
+      width: 3.25rem;
+      height: 1.85rem;
+      border-radius: 999px;
+      border: 1px solid var(--stroke);
+      background: var(--toggle-bg);
+      padding: 3px;
+      cursor: pointer;
+      position: relative;
+      transition: background 0.25s ease, border-color 0.25s ease;
+    }
+
+    .theme-toggle:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    .theme-toggle__knob {
+      width: 1.45rem;
+      height: 1.45rem;
+      border-radius: 50%;
+      background: var(--toggle-knob);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    [data-theme="light"] .theme-toggle__knob {
+      transform: translateX(1.35rem);
+    }
+
+    .theme-toggle__icon {
+      width: 0.85rem;
+      height: 0.85rem;
+      color: #1a1428;
+    }
+
+    [data-theme="dark"] .theme-toggle__icon--sun {
+      display: none;
+    }
+
+    [data-theme="light"] .theme-toggle__icon--moon {
+      display: none;
+    }
+
+    .app__main {
+      flex: 1;
+      padding: 1rem 1rem 0.5rem;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    @media (min-width: 480px) {
+      .app__main {
+        padding: 0 0.25rem;
+      }
+    }
+
+    .sheet {
       background: var(--card);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border-radius: 24px;
-      padding: clamp(1.75rem, 5vw, 2.35rem);
+      border-radius: 24px 24px 0 0;
       border: 1px solid var(--stroke);
-      box-shadow:
-        0 4px 24px rgba(0, 0, 0, 0.12),
-        0 0 0 1px rgba(255, 255, 255, 0.06) inset;
-      animation: card-in 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+      border-bottom: none;
+      box-shadow: var(--shadow);
+      padding: 1.35rem 1.15rem 1rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: min(60dvh, 24rem);
+      animation: sheet-in 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
 
-    @keyframes card-in {
+    @media (min-width: 480px) {
+      .sheet {
+        border-radius: 24px;
+        border-bottom: 1px solid var(--stroke);
+        min-height: auto;
+      }
+    }
+
+    @keyframes sheet-in {
       from {
         opacity: 0;
-        transform: translateY(28px) scale(0.97);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    h1 {
-      margin: 0 0 1.65rem;
-      font-size: clamp(1.65rem, 5vw, 2rem);
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      line-height: 1.15;
-      background: linear-gradient(115deg, #1a1428 0%, #3d2d6b 40%, var(--accent) 100%);
-      background-size: 200% auto;
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      animation:
-        fade-up 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.18s both,
-        shimmer 8s ease-in-out infinite alternate;
-    }
-
-    @keyframes fade-up {
-      from {
-        opacity: 0;
-        transform: translateY(14px);
+        transform: translateY(20px);
       }
       to {
         opacity: 1;
@@ -155,39 +299,44 @@
       }
     }
 
-    @keyframes shimmer {
-      0% {
-        background-position: 0% center;
-      }
-      100% {
-        background-position: 100% center;
-      }
+    .sheet__heading {
+      margin: 0 0 1.15rem;
+      font-size: clamp(1.45rem, 5.5vw, 1.75rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      background: var(--title-grad);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: shimmer 10s ease-in-out infinite alternate;
     }
 
-    ul {
+    ul.ideas {
       margin: 0;
       padding: 0;
       list-style: none;
+      flex: 1;
     }
 
-    li {
+    ul.ideas li {
       position: relative;
-      margin-bottom: 0.65rem;
-      padding: 0.95rem 1rem 0.95rem 1.15rem;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.45);
-      border: 1px solid rgba(255, 255, 255, 0.65);
+      margin-bottom: 0.6rem;
+      padding: 1rem 1rem 1rem 1.1rem;
+      border-radius: 16px;
+      background: var(--item-bg);
+      border: 1px solid var(--item-border);
       font-weight: 500;
+      font-size: 0.95rem;
       color: var(--ink);
-      cursor: default;
       transition:
-        transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-        box-shadow 0.35s ease,
-        border-color 0.35s ease;
-      animation: fade-up 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+        transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.3s ease,
+        border-color 0.3s ease;
     }
 
-    li::before {
+    ul.ideas li::before {
       content: "";
       position: absolute;
       left: 0;
@@ -196,65 +345,197 @@
       width: 3px;
       height: 0;
       border-radius: 0 3px 3px 0;
-      background: linear-gradient(180deg, var(--accent), #2dd4bf);
-      transition: height 0.35s cubic-bezier(0.22, 1, 0.36, 1), transform 0.35s ease;
+      background: linear-gradient(180deg, var(--accent), var(--accent-2));
+      transition: height 0.3s cubic-bezier(0.22, 1, 0.36, 1), transform 0.3s ease;
     }
 
-    li:nth-child(1) { animation-delay: 0.32s; }
-    li:nth-child(2) { animation-delay: 0.42s; }
-    li:nth-child(3) { animation-delay: 0.52s; }
-
-    li:last-child {
+    ul.ideas li:last-child {
       margin-bottom: 0;
     }
 
-    li:hover {
-      transform: translateX(6px);
-      box-shadow: 0 8px 28px rgba(107, 77, 255, 0.12);
-      border-color: var(--accent-soft);
+    @media (hover: hover) {
+      ul.ideas li:hover {
+        transform: translateX(4px);
+        box-shadow: 0 6px 24px var(--btn-glow);
+      }
+
+      ul.ideas li:hover::before {
+        height: 55%;
+        transform: translateY(-50%) scaleY(1);
+      }
     }
 
-    li:hover::before {
-      height: 60%;
-      transform: translateY(-50%) scaleY(1);
+    ul.ideas li.is-refresh {
+      animation: item-pop 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    @keyframes item-pop {
+      from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 0% center; }
+      100% { background-position: 100% center; }
+    }
+
+    .app__dock {
+      padding: 0.75rem 1rem calc(0.85rem + var(--safe-bottom));
+      padding-left: max(1rem, var(--safe-x));
+      padding-right: max(1rem, var(--safe-x));
+      background: var(--bar-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid var(--stroke);
+      position: sticky;
+      bottom: 0;
+      z-index: 2;
+    }
+
+    @media (min-width: 480px) {
+      .app__dock {
+        position: static;
+        background: transparent;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        border: none;
+        padding: 1rem 0.25rem max(1.25rem, var(--safe-bottom));
+      }
+    }
+
+    .btn-generate {
+      width: 100%;
+      min-height: 3.25rem;
+      border: none;
+      border-radius: 16px;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, var(--accent) 0%, #4f36c9 50%, #2563eb 100%);
+      background-size: 200% 200%;
+      box-shadow: 0 4px 20px var(--btn-glow);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn-generate::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        110deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.22) 45%,
+        transparent 55%
+      );
+      transform: translateX(-120%);
+      animation: btn-sheen 2.8s ease-in-out infinite;
+    }
+
+    @keyframes btn-sheen {
+      0%, 70% { transform: translateX(-120%); }
+      85% { transform: translateX(120%); }
+      100% { transform: translateX(120%); }
+    }
+
+    .btn-generate:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 28px var(--btn-glow);
+    }
+
+    .btn-generate:active:not(:disabled) {
+      transform: translateY(0) scale(0.98);
+    }
+
+    .btn-generate:focus-visible {
+      outline: 2px solid var(--accent-2);
+      outline-offset: 3px;
+    }
+
+    .btn-generate:disabled {
+      cursor: wait;
+      opacity: 0.92;
+    }
+
+    .btn-generate.is-loading::after {
+      animation: none;
+      opacity: 0;
+    }
+
+    .btn-generate__inner {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-generate__spinner {
+      width: 1.15rem;
+      height: 1.15rem;
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.65s linear infinite;
+      display: none;
+    }
+
+    .btn-generate.is-loading .btn-generate__spinner {
+      display: block;
+    }
+
+    .btn-generate.is-loading .btn-generate__label {
+      opacity: 0.92;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
 
     @media (prefers-reduced-motion: reduce) {
       .bg__blob,
-      h1 {
+      .sheet__heading {
         animation: none;
       }
 
-      h1 {
-        background: none;
+      .sheet__heading {
+        background: var(--title-grad);
+        background-size: 100% 100%;
+      }
+
+      .sheet__heading {
         color: var(--ink);
         -webkit-background-clip: unset;
         background-clip: unset;
+        background: none;
       }
 
-      main,
-      h1,
-      li {
+      .sheet,
+      ul.ideas li.is-refresh {
         animation: none;
-        opacity: 1;
-        transform: none;
       }
 
-      li {
-        transition: none;
-      }
-
-      li:hover {
-        transform: none;
-      }
-
-      li::before {
+      .btn-generate::after {
         display: none;
+      }
+
+      .theme-toggle__knob {
+        transition: none;
       }
     }
   </style>
 </head>
-<body>
+<body data-theme="dark">
   <div class="bg" aria-hidden="true">
     <div class="bg__blob bg__blob--1"></div>
     <div class="bg__blob bg__blob--2"></div>
@@ -262,13 +543,128 @@
     <div class="bg__grain"></div>
   </div>
 
-  <main>
-    <h1>Генератор идей для постов</h1>
-    <ul>
-      <li>5 идей постов для экспертов</li>
-      <li>3 идеи сторис</li>
-      <li>контент план на неделю</li>
-    </ul>
-  </main>
+  <div class="app">
+    <header class="app__bar">
+      <h1 class="app__bar-title">Идеи для постов</h1>
+      <button
+        type="button"
+        class="theme-toggle"
+        id="theme-toggle"
+        aria-label="Переключить на светлую тему"
+        title="Тема"
+      >
+        <span class="theme-toggle__knob" aria-hidden="true">
+          <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M21.64 13a9 9 0 11-10.73-10.73 1 1 0 011.49.86 5 5 0 007.8 6.26 1 1 0 01.44 1.61z"/>
+          </svg>
+          <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 18a6 6 0 100-12 6 6 0 000 12zm0-16a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm0 18a1 1 0 01-1-1v-1a1 1 0 112 0v1a1 1 0 01-1 1zM5.64 7.05a1 1 0 010 1.41l-.71.71a1 1 0 11-1.41-1.41l.71-.71a1 1 0 011.41 0zm12.02 12.02a1 1 0 010 1.41l-.71.71a1 1 0 11-1.41-1.41l.71-.71a1 1 0 011.41 0zM3 13a1 1 0 01-1-1 1 1 0 011-1h1a1 1 0 110 2H3zm17 0a1 1 0 01-1-1 1 1 0 011-1h1a1 1 0 110 2h-1zM6.34 16.95a1 1 0 010 1.41l-.71.71a1 1 0 11-1.41-1.41l.71-.71a1 1 0 011.41 0zm12.02-12.02a1 1 0 010 1.41l-.71.71a1 1 0 01-1.41-1.41l.71-.71a1 1 0 011.41 0z"/>
+          </svg>
+        </span>
+      </button>
+    </header>
+
+    <div class="app__main">
+      <div class="sheet">
+        <h2 class="sheet__heading">Генератор идей для постов</h2>
+        <ul class="ideas" id="ideas-list" aria-live="polite">
+          <li>5 идей постов для экспертов</li>
+          <li>3 идеи сторис</li>
+          <li>контент план на неделю</li>
+        </ul>
+      </div>
+    </div>
+
+    <footer class="app__dock">
+      <button type="button" class="btn-generate" id="btn-generate">
+        <span class="btn-generate__inner">
+          <span class="btn-generate__spinner" aria-hidden="true"></span>
+          <span class="btn-generate__label">Сгенерировать идеи</span>
+        </span>
+      </button>
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      const THEME_KEY = "ideas-gen-theme";
+      const metaTheme = document.getElementById("meta-theme");
+      const root = document.body;
+      const toggle = document.getElementById("theme-toggle");
+      const btn = document.getElementById("btn-generate");
+      const list = document.getElementById("ideas-list");
+
+      const variants = [
+        [
+          "5 постов для экспертов: разбор ошибок, чек-лист, личный кейс, мифы ниши, «что бы я сделал на вашем месте»",
+          "5 идей для экспертов: до/после, FAQ из директ, инструменты работы, история клиента, прогноз тренда",
+          "5 тем для экспертов: урок за 60 секунд, красные флаги в заказе, мини-гайд, сравнение подходов, разбор цены",
+        ],
+        [
+          "3 сторис: опрос + ответ в следующем круге, «день из жизни», быстрый лайфхак в 3 слайдах",
+          "3 сторис: закулисье процесса, вопрос подписчикам, тизер следующего поста",
+          "3 сторис: до/после в формате свайпа, таймер на эфир, мини-челлендж на неделю",
+        ],
+        [
+          "План недели: Пн — обучающий пост, Ср — кейс, Пт — сторис-опрос; выходные — закреп и ответы в Директ",
+          "Неделя контента: 2 экспертных поста, 1 личная история, 2 пакета сторис, 1 рубрика «вопрос недели»",
+          "Контент-план: понедельник — тезисы, среда — разбор, пятница — итоги недели + сторис каждый день по 3 кадра",
+        ],
+      ];
+
+      function applyTheme(theme) {
+        root.dataset.theme = theme;
+        localStorage.setItem(THEME_KEY, theme);
+        const isLight = theme === "light";
+        metaTheme.setAttribute("content", isLight ? "#f0f2f8" : "#0f0c14");
+        toggle.setAttribute(
+          "aria-label",
+          isLight ? "Переключить на тёмную тему" : "Переключить на светлую тему"
+        );
+      }
+
+      const saved = localStorage.getItem(THEME_KEY);
+      if (saved === "light" || saved === "dark") {
+        applyTheme(saved);
+      } else if (window.matchMedia("(prefers-color-scheme: light)").matches) {
+        applyTheme("light");
+      } else {
+        applyTheme("dark");
+      }
+
+      toggle.addEventListener("click", function () {
+        applyTheme(root.dataset.theme === "light" ? "dark" : "light");
+      });
+
+      function pickLine(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+      }
+
+      btn.addEventListener("click", function () {
+        if (btn.disabled) return;
+        btn.disabled = true;
+        btn.classList.add("is-loading");
+
+        var delay = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 720;
+        window.setTimeout(function () {
+          const lines = [
+            pickLine(variants[0]),
+            pickLine(variants[1]),
+            pickLine(variants[2]),
+          ];
+          list.innerHTML = "";
+          lines.forEach(function (text, i) {
+            const li = document.createElement("li");
+            li.textContent = text;
+            li.style.animationDelay = (i * 0.06) + "s";
+            li.classList.add("is-refresh");
+            list.appendChild(li);
+          });
+          btn.classList.remove("is-loading");
+          btn.disabled = false;
+        }, delay);
+      });
+    })();
+  </script>
 </body>
 </html>
